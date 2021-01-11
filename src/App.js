@@ -1,39 +1,44 @@
 import '@tensorflow/tfjs-backend-webgl';
 import * as handpose from "@tensorflow-models/handpose";
 import './App.css';
-import React, { useRef } from "react";
+import React, { useRef, Component } from "react";
 import Webcam from "react-webcam";
 
-function App() {
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
-  const videoConfig = {width: 1280, height: 720}
-
-  const init = () => {
-    runHandPose();
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      webcamRef: useRef(null),
+      canvasRef: useRef(null),
+      videoConfig: {width: 1280, height: 720},
+     };
   }
 
-  const runHandPose = async () => {
+  componentDidUpdate = () => {
+    this.runHandPose();
+  }
+
+  runHandPose = async () => {
     const net = await handpose.load()
     console.log('Handpose model loaded')
     
     setInterval(() => {
-        detect(net)
+        this.detect(net)
     }, 25);
   }
 
-  const detect = async (net) => {
-    if (typeof webcamRef.current !== "undefined" && 
-        webcamRef.current !== null &&
-        webcamRef.current.video.readyState === 4) {
+  detect = async (net) => {
+    if (typeof this.state.webcamRef.current !== "undefined" && 
+        this.state.webcamRef.current !== null &&
+        this.state.webcamRef.current.video.readyState === 4) {
 
-        const hand = await net.estimateHands(webcamRef.current.video);
-        drawHand(hand);
+        const hand = await net.estimateHands(this.state.webcamRef.current.video);
+        this.drawHand(hand);
     }
 
   }
 
-  const drawHand = (predictions) => {
+  drawHand = (predictions) => {
       if (predictions.length>0) {
           predictions.forEach((prediction) => {
               const landmarks = prediction.landmarks;
@@ -42,7 +47,7 @@ function App() {
                   const x = landmarks[i][0]
                   const y = landmarks[i][1]
 
-                  const ctx = canvasRef.current.getContext("2d");
+                  const ctx = this.state.canvasRef.current.getContext("2d");
                   ctx.beginPath();
                   ctx.arc(x, y, 5, 0, 3 * Math.PI)
                   ctx.fillStyle = "indigo"
@@ -52,25 +57,25 @@ function App() {
       }
   }
 
-  init();
-
-  return (
-    <div className="App">
-      <header className="App-header">
-       <Webcam ref={webcamRef}
-       style={{
-         width: videoConfig.width,
-         height: videoConfig.height,
-       }}></Webcam>
-       <canvas ref={canvasRef}
-       style={{
-        position: "absolute",
-        width: videoConfig.width,
-        height: videoConfig.height,
-      }}></canvas>
-      </header>
-    </div>
-  );
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+        <Webcam ref={this.state.webcamRef}
+        style={{
+          width: this.state.videoConfig.width,
+          height: this.state.videoConfig.height,
+        }}></Webcam>
+        <canvas ref={this.state.canvasRef}
+        style={{
+          position: "absolute",
+          width: this.state.videoConfig.width,
+          height: this.state.videoConfig.height,
+        }}></canvas>
+        </header>
+      </div>
+    );
+  }
 }
 
 export default App;
