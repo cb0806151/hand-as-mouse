@@ -24,9 +24,8 @@ class App extends Component {
   }
 
   runHandPose = async () => {
-      const net = await handpose.load()
+      const net = await handpose.load(Infinity, 0.4)
       console.log('Handpose model loaded')
-      console.log(this.state.video)
       setInterval(() => {
           this.detect(net)
       }, 25);
@@ -43,6 +42,9 @@ class App extends Component {
       if (predictions.length>0) {
           predictions.forEach((prediction) => {
               const landmarks = prediction.landmarks;
+              let cursor = document.getElementById("cursor")
+              cursor.style.left = landmarks[0][0] + 'px'
+              cursor.style.top = landmarks[0][1] + 'px'
 
               for (let i = 0; i<landmarks.length; i++) {
                   const x = landmarks[i][0]
@@ -94,6 +96,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div id="cursor"></div>
         <header className="App-header">
           <canvas id="canvasElement" style={{position: "absolute"}}></canvas>
           <video autoPlay={true} id="videoElement"></video>    
