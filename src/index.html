@@ -5,23 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        body {
+            /* -webkit-transform: scaleX(-1);
+            transform: scaleX(-1); */
+            background-color: black
+        }
         #container {
-            margin: 0px auto;
             width: 90vw;
         }
-        #videoElement {
-            background-color: #666;
-        }
-        #canvasElement {
+        .buttonEl {
             position: absolute;
-            z-index: 100;
+            padding: 40px;
+            top: 200px;
+            left: 600px;
+        }
+        .buttonEl:focus {
+            background-color: blue;
+        }
+        #cursorEl {
+            z-index: 1000;
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            opacity: 0.5;
+            background-color: red;
+            border: 1px solid white;
+        }
+        .handsfree-debugger {
+            display:none
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <canvas id="canvasElement"></canvas>
-        <!-- <video autoplay="true" id="videoElement"></video>         -->
+    <div id="container">-->
+        <button class="buttonEl clickable" onclick="buttonClicked()">Button</button>
+        <div id="cursorEl">
+            <div id="cursorLoader"></div>
+        </div>
     </div>
 </body>
 </html>

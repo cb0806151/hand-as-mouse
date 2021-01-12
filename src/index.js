@@ -2,110 +2,91 @@ import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
-// var video = document.querySelector("#videoElement");
-var canvas = document.querySelector("#canvasElement");
-var ctx = canvas.getContext("2d");
-var videoConfig = {width: {exact: 1280}, height: {exact: 720}}
 
+var cursor = document.getElementById("cursorEl");
+var status = null
+var clickGauge = 0
 
 window.addEventListener("DOMContentLoaded", () => {
-    // var video = document.querySelector("#videoElement");
-    canvas = document.querySelector("#canvasElement");
-    ctx = canvas.getContext("2d");
-    videoConfig = {width: {exact: 1280}, height: {exact: 720}}
-    canvas.width = videoConfig.width.exact;
-    canvas.height = videoConfig.height.exact
-    // setupCamera()
+    cursor = document.getElementById("cursorEl");
+
     const handsfree = new Handsfree({
         hands: {
           enabled: true,
-          // The maximum number of hands to detect [0 - 4]
           maxNumHands: 1,
-      
-          // Minimum confidence [0 - 1] for a hand to be considered detected
-          minDetectionConfidence: 0.5,
-      
-          // Minimum confidence [0 - 1] for the landmark tracker to be considered detected
-          // Higher values are more robust at the expense of higher latency
+          minDetectionConfidence: 0.6,
           minTrackingConfidence: 0.5
         }
       })
     handsfree.start();
+    
     setInterval(() => {
         if (handsfree.data.hands !== undefined && 
             handsfree.data.hands.multiHandLandmarks !== undefined) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                styleHand(handsfree.data.hands.multiHandLandmarks[0]);
-                
+                let landmarks = handsfree.data.hands.multiHandLandmarks[0]
+                moveCursor(handsfree.data.hands.multiHandLandmarks[0])
+                checkSideOfHand(landmarks)
+                if (cursor != null) checkIfClicking(landmarks)
         }
     }, 25)
 });
 
-const runHandPose = async () => {
-    const net = await handpose.load()
-    console.log('Handpose model loaded')
-    setInterval(() => {
-        detect(net, )
-    }, 5);
+window.buttonClicked = () => {
+    console.log("button has been clicked")
 }
 
-const detect = async (net) => {
-    const hand = await net.estimateHands(video);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawHand(hand);
+const getSideOfHand = (landmarks, flipped) => {
+    let options = ["palm", "back"];
+    if (flipped) options.reverse();
 
-}
-
-const styleHand = (landmarks) => {
-    for (let i = 0; i<landmarks.length; i++) {
-        const x = landmarks[i].x * 1000
-        const y = landmarks[i].y * 1000
-
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 3 * Math.PI)
-
-        ctx.fillStyle = "indigo"
-        ctx.fill();
+    if (landmarks[0].y - landmarks[12].y > 0) {
+        status = options[0]
+    } else {
+        status = options[1]
     }
 }
 
-const drawHand = (predictions) => {
-    if (predictions.length>0) {
-        predictions.forEach((prediction) => {
-            const landmarks = prediction.landmarks;
-
-            for (let i = 0; i<landmarks.length; i++) {
-                const x = landmarks[i][0]
-                const y = landmarks[i][1]
-
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 3 * Math.PI)
-
-                ctx.fillStyle = "indigo"
-                ctx.fill();
-            }
-        })
-    }
-}
-
-const setupWidthAndHeight = () => {
-    video.width = videoConfig.width.exact;
-    video.height = videoConfig.height.exact;
+const checkIfClicking = (landmarks) => {
+    let elems = document.elementsFromPoint((window.innerWidth - (landmarks[9].x * 1300)), (landmarks[9].y * 800))
+    let selectedElem = elems.find(e => e.classList.contains("clickable"))
     
-    canvas.width = videoConfig.width.exact;
-    canvas.height = videoConfig.height.exact
+    if (status == "back") {
+        cursor.style.backgroundColor = "lime"
+    } else {
+        cursor.style.backgroundColor = "red"
+    }
+
+    if (selectedElem === undefined) {
+        clickGauge = 0
+        cursor.style.opacity = 0.5
+        var allClickableElements = document.querySelectorAll('.clickable')
+        allClickableElements.forEach((elem) => {
+            elem.blur();
+        });
+    } else {
+        selectedElem.focus();
+        if (status == "back") {
+            clickGauge += 1
+            cursor.style.opacity = 0.5 + (clickGauge/40)
+            if (clickGauge === 20) {
+                clickGauge = 0
+                selectedElem.click();
+            }
+        }
+    }
 }
 
-const setupCamera = async () => {
-    if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: videoConfig })
-            .then(function (stream) {
-                video.srcObject = stream;
-                setupWidthAndHeight();
-                runHandPose()
-            })
-            .catch(function (error) {
-                console.log("Something went wrong!");
-            });
+const checkSideOfHand = (landmarks) => {
+    if (landmarks[20].x - landmarks[4].x > 0) {
+        getSideOfHand(landmarks, false)
+    } else {
+        getSideOfHand(landmarks, true)
+    }
+}
+
+const moveCursor = (landmarks) => {
+    if (cursor != null) {
+        cursor.style.left = (window.innerWidth - (landmarks[9].x * 1300)) + 'px'
+        cursor.style.top = (landmarks[9].y * 800) + 'px'
     }
 }
