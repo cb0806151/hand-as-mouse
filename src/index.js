@@ -4,6 +4,8 @@ import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
 
 var cursor = document.getElementById("cursorEl");
+var hoveredElem = undefined;
+var clickedElem = undefined;
 var status = null
 var clickGauge = 0
 
@@ -26,7 +28,10 @@ window.addEventListener("DOMContentLoaded", () => {
                 let landmarks = handsfree.data.hands.multiHandLandmarks[0]
                 moveCursor(handsfree.data.hands.multiHandLandmarks[0])
                 checkSideOfHand(landmarks)
-                if (cursor != null) checkIfClicking(landmarks)
+                checkElementsNearCursor(landmarks)
+                if (cursor != null) setCursorStyle()
+                checkIfClicking()
+                checkIfHovered()
         }
     }, 25)
 });
@@ -46,33 +51,50 @@ const getSideOfHand = (landmarks, flipped) => {
     }
 }
 
-const checkIfClicking = (landmarks) => {
+const checkElementsNearCursor = (landmarks) => {
     let elems = document.elementsFromPoint((window.innerWidth - (landmarks[9].x * 1300)), (landmarks[9].y * 800))
-    let selectedElem = elems.find(e => e.classList.contains("clickable"))
-    
+    hoveredElem = elems.find(e => e.classList.contains("hoverable"))
+    clickedElem = elems.find(e => e.classList.contains("clickable"))
+}
+
+const checkIfHovered = () => {
+
+    if (hoveredElem === undefined) {
+        var allClickableElements = document.querySelectorAll('.hoverable')
+        allClickableElements.forEach((elem) => {
+            elem.classList.remove("hovered")
+        });
+    } else {
+        hoveredElem.classList.add("hovered")
+    }
+}
+
+const setCursorStyle = () => {
+
     if (status == "back") {
         cursor.style.backgroundColor = "lime"
     } else {
         cursor.style.backgroundColor = "red"
     }
 
-    if (selectedElem === undefined) {
+    if (hoveredElem === undefined) {
         clickGauge = 0
         cursor.style.opacity = 0.5
-        var allClickableElements = document.querySelectorAll('.clickable')
-        allClickableElements.forEach((elem) => {
-            elem.blur();
-        });
     } else {
-        selectedElem.focus();
         if (status == "back") {
             clickGauge += 1
             cursor.style.opacity = 0.5 + (clickGauge/40)
-            if (clickGauge === 20) {
-                clickGauge = 0
-                selectedElem.click();
-            }
         }
+    }
+}
+
+const checkIfClicking = () => {
+
+    if (clickedElem !== undefined && 
+        status == "back" && 
+        clickGauge === 20) {
+        clickGauge = 0
+        clickedElem.click();
     }
 }
 

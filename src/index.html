@@ -19,8 +19,8 @@
             top: 200px;
             left: 600px;
         }
-        .buttonEl:focus {
-            background-color: blue;
+        .hovered {
+            box-shadow: 5px 5px 8px white;
         }
         #cursorEl {
             z-index: 1000;
@@ -35,11 +35,33 @@
         .handsfree-debugger {
             display:none
         }
+        #scrollboxEl {
+            position: absolute;
+            left: 600px;
+            width: 100%;
+            overflow-x: scroll;
+            background-color: gray;
+        }
+        #stretchEl {
+            width: 200%;
+            height: 205px;
+            background-color: darkcyan;
+        }
+        #scrollbarEl {
+            width: 400px;
+            height: 200px;
+            background-color: lightgray;
+        }
     </style>
 </head>
 <body>
     <div id="container">-->
-        <button class="buttonEl clickable" onclick="buttonClicked()">Button</button>
+        <div id="scrollboxEl">
+            <div id="stretchEl"></div>
+            <div id="scrollbarEl" class="hoverable"></div>
+            <button class="buttonEl hoverable clickable" onclick="buttonClicked()">Button</button>
+        </div>
+        
         <div id="cursorEl">
             <div id="cursorLoader"></div>
         </div>
