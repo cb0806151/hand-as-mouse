@@ -6,8 +6,14 @@ import Handsfree from "handsfree";
 var cursor = document.getElementById("cursorEl");
 var hoveredElem = undefined;
 var clickedElem = undefined;
-var status = null
+var scrolledElem = undefined;
+var status = null;
+var lastStatus = null;
+var positionOnClick = [undefined, undefined];
 var clickGauge = 0
+var cursorX = 0;
+var cursorY = 0;
+var scrollStartPosition = 0;
 
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
@@ -28,10 +34,11 @@ window.addEventListener("DOMContentLoaded", () => {
                 let landmarks = handsfree.data.hands.multiHandLandmarks[0]
                 moveCursor(handsfree.data.hands.multiHandLandmarks[0])
                 checkSideOfHand(landmarks)
-                checkElementsNearCursor(landmarks)
+                checkElementsNearCursor()
                 if (cursor != null) setCursorStyle()
                 checkIfClicking()
                 checkIfHovered()
+                checkIfScrolling()
         }
     }, 25)
 });
@@ -40,21 +47,11 @@ window.buttonClicked = () => {
     console.log("button has been clicked")
 }
 
-const getSideOfHand = (landmarks, flipped) => {
-    let options = ["palm", "back"];
-    if (flipped) options.reverse();
-
-    if (landmarks[0].y - landmarks[12].y > 0) {
-        status = options[0]
-    } else {
-        status = options[1]
-    }
-}
-
-const checkElementsNearCursor = (landmarks) => {
-    let elems = document.elementsFromPoint((window.innerWidth - (landmarks[9].x * 1300)), (landmarks[9].y * 800))
+const checkElementsNearCursor = () => {
+    let elems = document.elementsFromPoint(cursorX, cursorY)
     hoveredElem = elems.find(e => e.classList.contains("hoverable"))
     clickedElem = elems.find(e => e.classList.contains("clickable"))
+    scrolledElem = elems.find(e => e.classList.contains("scrollable"))
 }
 
 const checkIfHovered = () => {
@@ -67,6 +64,12 @@ const checkIfHovered = () => {
     } else {
         hoveredElem.classList.add("hovered")
     }
+}
+
+const checkIfScrolling = () => {
+    if (scrolledElem !== undefined && status == "back" && positionOnClick[0] !== undefined) {
+        scrolledElem.scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
+    } 
 }
 
 const setCursorStyle = () => {
@@ -98,6 +101,22 @@ const checkIfClicking = () => {
     }
 }
 
+const getSideOfHand = (landmarks, flipped) => {
+    lastStatus = status
+    let options = ["palm", "back"];
+    if (flipped) options.reverse();
+
+    if (landmarks[0].y - landmarks[12].y > 0) {
+        status = options[0]
+    } else {
+        status = options[1]
+    }
+    if (status !== lastStatus) {
+        positionOnClick = [cursorX, cursorY]
+        if (scrolledElem !== undefined) scrollStartPosition = scrolledElem.scrollLeft
+    }
+}
+
 const checkSideOfHand = (landmarks) => {
     if (landmarks[20].x - landmarks[4].x > 0) {
         getSideOfHand(landmarks, false)
@@ -107,8 +126,10 @@ const checkSideOfHand = (landmarks) => {
 }
 
 const moveCursor = (landmarks) => {
+    cursorX = (window.innerWidth - (landmarks[9].x * 1300))
+    cursorY = (landmarks[9].y * 800)
     if (cursor != null) {
-        cursor.style.left = (window.innerWidth - (landmarks[9].x * 1300)) + 'px'
-        cursor.style.top = (landmarks[9].y * 800) + 'px'
+        cursor.style.left = cursorX + 'px'
+        cursor.style.top = cursorY + 'px'
     }
 }

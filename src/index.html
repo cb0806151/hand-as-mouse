@@ -6,8 +6,6 @@
     <title>Document</title>
     <style>
         body {
-            /* -webkit-transform: scaleX(-1);
-            transform: scaleX(-1); */
             background-color: black
         }
         #container {
@@ -37,8 +35,8 @@
         }
         #scrollboxEl {
             position: absolute;
-            left: 600px;
-            width: 100%;
+            top: 300px;
+            width: 90%;
             overflow-x: scroll;
             background-color: gray;
         }
@@ -56,9 +54,8 @@
 </head>
 <body>
     <div id="container">-->
-        <div id="scrollboxEl">
+        <div id="scrollboxEl" class="scrollable">
             <div id="stretchEl"></div>
-            <div id="scrollbarEl" class="hoverable"></div>
             <button class="buttonEl hoverable clickable" onclick="buttonClicked()">Button</button>
         </div>
         
