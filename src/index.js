@@ -3,10 +3,13 @@ import '@tensorflow/tfjs-backend-webgl';
 import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
 
+var canvas = document.getElementById("canvasEl")
+var ctx = document.getElementById("canvasEl").getContext("2d")
 var cursor = document.getElementById("cursorEl");
 var hoveredElem = undefined;
 var clickedElem = undefined;
 var scrolledElem = undefined;
+var drewElem = undefined;
 var status = null;
 var lastStatus = null;
 var positionOnClick = [undefined, undefined];
@@ -14,9 +17,13 @@ var clickGauge = 0
 var cursorX = 0;
 var cursorY = 0;
 var scrollStartPosition = 0;
+var lastLinePosition = [undefined, undefined]
+var canDraw = false;
 
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
+    canvas = document.getElementById("canvasEl")
+    ctx = canvas.getContext("2d")
 
     const handsfree = new Handsfree({
         hands: {
@@ -27,6 +34,15 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       })
     handsfree.start();
+
+    handsfree.on('finger-pinched-start-1-0', () => {
+        if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
+        canDraw = true
+    })
+
+    handsfree.on('finger-pinched-released-1-0', () => {
+        canDraw = false
+    })
     
     setInterval(() => {
         if (handsfree.data.hands !== undefined && 
@@ -39,6 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 checkIfClicking()
                 checkIfHovered()
                 checkIfScrolling()
+                checkIfDrawing()
         }
     }, 25)
 });
@@ -52,6 +69,7 @@ const checkElementsNearCursor = () => {
     hoveredElem = elems.find(e => e.classList.contains("hoverable"))
     clickedElem = elems.find(e => e.classList.contains("clickable"))
     scrolledElem = elems.find(e => e.classList.contains("scrollable"))
+    drewElem = elems.find(e => e.classList.contains("drawable"))
 }
 
 const checkIfHovered = () => {
@@ -70,6 +88,20 @@ const checkIfScrolling = () => {
     if (scrolledElem !== undefined && status == "back" && positionOnClick[0] !== undefined) {
         scrolledElem.scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
     } 
+}
+
+const checkIfDrawing = () => {
+
+    if (canDraw === true && drewElem !== undefined && lastLinePosition[0] !== undefined) {
+        ctx.beginPath()
+        ctx.strokeStyle = "white";
+        ctx.lineWdith = 2;
+        ctx.moveTo(lastLinePosition[0] - 500, lastLinePosition[1])
+        ctx.lineTo(cursorX - 500, cursorY)
+        ctx.stroke()
+        ctx.closePath()
+        lastLinePosition = [cursorX, cursorY]
+    }
 }
 
 const setCursorStyle = () => {
@@ -114,6 +146,7 @@ const getSideOfHand = (landmarks, flipped) => {
     if (status !== lastStatus) {
         positionOnClick = [cursorX, cursorY]
         if (scrolledElem !== undefined) scrollStartPosition = scrolledElem.scrollLeft
+        // if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
     }
 }
 

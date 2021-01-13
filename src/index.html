@@ -50,14 +50,20 @@
             height: 200px;
             background-color: lightgray;
         }
+        #canvasEl {
+            position: absolute;
+            left: 500px;
+            background-color: black;
+        }
     </style>
 </head>
 <body>
     <div id="container">-->
-        <div id="scrollboxEl" class="scrollable">
+        <!-- <div id="scrollboxEl" class="scrollable">
             <div id="stretchEl"></div>
             <button class="buttonEl hoverable clickable" onclick="buttonClicked()">Button</button>
-        </div>
+        </div> -->
+        <canvas id="canvasEl" class="drawable" width="1300" height="600"></canvas>
         
         <div id="cursorEl">
             <div id="cursorLoader"></div>
