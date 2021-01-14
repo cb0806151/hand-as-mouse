@@ -16,7 +16,7 @@
     </div>
     <div class="h-screen flex flex-col items-center">
 
-        <div class="w-2/5 flex flex-auto flex-col mt-10">
+        <div id="orderPage" class="w-2/5 flex flex-auto flex-col mt-10">
 
             <div class="w-full flex flex-row flex-auto overflow-x-scroll scrollable" style="max-height: 370px;">
 
@@ -54,10 +54,18 @@
 
             </div>
 
-            <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable">Place Order</div>
+            <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('verifyPage', 'orderPage')">Verify Order</div>
 
+        </div>
+
+        <div id="verifyPage" class="w-2/5 flex flex-auto flex-col mt-10 hidden">
+        
             <div id="orderTray" class="w-full flex flex-col content-center items-center mt-10"></div>
 
+            <div class="grid grid-cols-2 gap-4">
+                <div data-hover="bg-yellow-700" class="bg-yellow-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('orderPage', 'verifyPage')">Back</div>
+                <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('orderPage', 'verifyPage')">Confirm</div>
+            </div>
         </div>
 
     </div>

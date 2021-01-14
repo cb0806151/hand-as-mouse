@@ -12,6 +12,7 @@ var hoveredElem = undefined;
 var clickedElem = undefined;
 var scrolledElem = undefined;
 var drewElem = undefined;
+var lastElemClicked = undefined;
 var status = null;
 var lastStatus = null;
 var positionOnClick = [undefined, undefined];
@@ -81,10 +82,40 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 25)
 });
 
+window.goToPage = (going, leaving) => {
+    document.getElementById(leaving).classList.add("hidden")
+    document.getElementById(going).classList.remove("hidden")
+}
+
 window.orderItem = (itemId) => {
     if (get(currentOrder, `${itemId}.quantity`, undefined) === undefined) currentOrder[itemId] = {quantity:0}
     currentOrder[itemId].quantity += 1
     createOrderTray();
+}
+
+window.removeItem = (itemId) => {
+    currentOrder[itemId].quantity -= 1
+    if (currentOrder[itemId].quantity === 0) delete currentOrder[itemId]
+    if (Object.entries(currentOrder).length === 0) {
+        goToPage('orderPage', 'verifyPage')
+        return
+    }
+    createOrderTray();
+    
+}
+
+const createOrderTray = () => {
+    let tray = document.getElementById("orderTray")
+    tray.textContent = ''
+    Object.entries(currentOrder).forEach((elem) => {
+        let entryString = `
+        <div data-hover="bg-red-500" class="bg-white w-72 p-8 rounded-lg mb-3 mr-3 hoverable clickable" onclick="removeItem(${parseInt(elem[0])})">
+            <p class="font-bold text-3x1">${elem[1].quantity} x ${items[parseInt(elem[0])].name} = ${items[parseInt(elem[0])].price * elem[1].quantity}</p>
+        </div>
+        `
+        let entry = new DOMParser().parseFromString(entryString, "text/html")
+        tray.appendChild(entry.firstChild)
+    })
 }
 
 const checkElementsNearCursor = () => {
@@ -108,7 +139,7 @@ const checkIfHovered = () => {
 }
 
 const checkIfScrolling = () => {
-    if (scrolledElem !== undefined && status == "back" && positionOnClick[0] !== undefined) {
+    if (clickedElem === undefined && scrolledElem !== undefined && status == "back" && positionOnClick[0] !== undefined) {
         scrolledElem.scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
     } 
 }
@@ -149,27 +180,12 @@ const setCursorStyle = () => {
     }
 }
 
-const createOrderTray = () => {
-    let tray = document.getElementById("orderTray")
-    tray.textContent = ''
-    console.log(Object.entries(currentOrder))
-    Object.entries(currentOrder).forEach((elem) => {
-        let entryString = `
-        <div data-hover="bg-red-500" class="bg-white w-72 p-4 rounded-lg mb-3">
-            <p class="font-bold">${elem[1].quantity} x ${items[parseInt(elem[0])].name} = ${items[parseInt(elem[0])].price * elem[1].quantity}</p>
-        </div>
-        `
-        console.log(entryString)
-        let entry = new DOMParser().parseFromString(entryString, "text/html")
-        tray.appendChild(entry.firstChild)
-    })
-}
-
 const checkIfClicking = () => {
 
     if (clickedElem !== undefined && status == "back") {
         let gradient = `linear-gradient(to left, rgba(255, 255, 255, 0.5) ${(clickGauge/20)*100}%, ${getComputedStyle(clickedElem).backgroundColor} ${(clickGauge/20)*100}%)`
         clickedElem.style.backgroundImage = gradient
+        lastElemClicked = clickedElem
         if (clickGauge === 20) {
             clickGauge = 0
             clickedElem.click();
@@ -190,7 +206,7 @@ const getSideOfHand = (landmarks, flipped) => {
     if (status !== lastStatus) {
         positionOnClick = [cursorX, cursorY]
         if (scrolledElem !== undefined) scrollStartPosition = scrolledElem.scrollLeft
-        // if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
+        if (lastElemClicked !== undefined) lastElemClicked.style.backgroundImage = "none"
     }
 }
 
@@ -205,6 +221,7 @@ const checkSideOfHand = (landmarks) => {
 const moveCursor = (landmarks) => {
     cursorX = (window.innerWidth - (landmarks[9].x * 1300))
     cursorY = (landmarks[9].y * 800)
+
     if (cursor != null) {
         cursor.style.left = cursorX + 'px'
         cursor.style.top = cursorY + 'px'
