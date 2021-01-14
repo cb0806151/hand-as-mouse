@@ -84,6 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
 window.orderItem = (itemId) => {
     if (get(currentOrder, `${itemId}.quantity`, undefined) === undefined) currentOrder[itemId] = {quantity:0}
     currentOrder[itemId].quantity += 1
+    createOrderTray();
 }
 
 const checkElementsNearCursor = () => {
@@ -146,6 +147,22 @@ const setCursorStyle = () => {
             clickGauge += 1
         }
     }
+}
+
+const createOrderTray = () => {
+    let tray = document.getElementById("orderTray")
+    tray.textContent = ''
+    console.log(Object.entries(currentOrder))
+    Object.entries(currentOrder).forEach((elem) => {
+        let entryString = `
+        <div data-hover="bg-red-500" class="bg-white w-72 p-4 rounded-lg mb-3">
+            <p class="font-bold">${elem[1].quantity} x ${items[parseInt(elem[0])].name} = ${items[parseInt(elem[0])].price * elem[1].quantity}</p>
+        </div>
+        `
+        console.log(entryString)
+        let entry = new DOMParser().parseFromString(entryString, "text/html")
+        tray.appendChild(entry.firstChild)
+    })
 }
 
 const checkIfClicking = () => {
