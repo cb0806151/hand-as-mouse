@@ -3,6 +3,7 @@ import '@tensorflow/tfjs-backend-webgl';
 import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
 import './style.css'
+import { get } from 'lodash'
 
 var canvas = document.getElementById("canvasEl")
 var ctx = document.getElementById("canvasEl").getContext("2d")
@@ -20,6 +21,25 @@ var cursorY = 0;
 var scrollStartPosition = 0;
 var lastLinePosition = [undefined, undefined]
 var canDraw = false;
+var items = {
+    0: {
+        "name": "Greek Salad",
+        "price": 4.99
+    },
+    1: {
+        "name": "Chicken Sandwich",
+        "price": 4.99
+    },
+    2: {
+        "name": "French Fries",
+        "price": 1.99
+    },
+    3: {
+        "name": "Soda",
+        "price": 0.99
+    },
+}
+var currentOrder = {}
 
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
@@ -61,8 +81,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 25)
 });
 
-window.buttonClicked = () => {
-    console.log("button has been clicked")
+window.orderItem = (itemId) => {
+    if (get(currentOrder, `${itemId}.quantity`, undefined) === undefined) currentOrder[itemId] = {quantity:0}
+    currentOrder[itemId].quantity += 1
 }
 
 const checkElementsNearCursor = () => {
@@ -115,6 +136,7 @@ const setCursorStyle = () => {
         // cursor.style.backgroundColor = "red"
         document.getElementById("cursorDefault").classList.remove("hidden")
         document.getElementById("cursorSelect").classList.add("hidden")
+        if (hoveredElem !== undefined) clickedElem.style.backgroundImage = "none"
     }
 
     if (hoveredElem === undefined) {
@@ -128,12 +150,14 @@ const setCursorStyle = () => {
 
 const checkIfClicking = () => {
 
-    if (clickedElem !== undefined && 
-        status == "back" && 
-        clickGauge === 20) {
-        clickGauge = 0
-        clickedElem.click();
-    }
+    if (clickedElem !== undefined && status == "back") {
+        let gradient = `linear-gradient(to left, rgba(255, 255, 255, 0.5) ${(clickGauge/20)*100}%, ${getComputedStyle(clickedElem).backgroundColor} ${(clickGauge/20)*100}%)`
+        clickedElem.style.backgroundImage = gradient
+        if (clickGauge === 20) {
+            clickGauge = 0
+            clickedElem.click();
+        }
+    } 
 }
 
 const getSideOfHand = (landmarks, flipped) => {
