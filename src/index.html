@@ -4,69 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        body {
-            background-color: black
-        }
-        #container {
-            width: 90vw;
-        }
-        .buttonEl {
-            position: absolute;
-            padding: 40px;
-            top: 200px;
-            left: 600px;
-        }
-        .hovered {
-            box-shadow: 5px 5px 8px white;
-        }
-        #cursorEl {
-            z-index: 1000;
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            opacity: 0.5;
-            background-color: red;
-            border: 1px solid white;
-        }
-        .handsfree-debugger {
-            display:none
-        }
-        #scrollboxEl {
-            position: absolute;
-            top: 300px;
-            width: 90%;
-            overflow-x: scroll;
-            background-color: gray;
-        }
-        #stretchEl {
-            width: 200%;
-            height: 105px;
-            background-color: darkcyan;
-        }
-        #scrollbarEl {
-            width: 400px;
-            height: 200px;
-            background-color: lightgray;
-        }
-        #canvasEl {
-            left: 500px;
-            background-color: black;
-        }
-    </style>
 </head>
-<body>
-    <div id="container">
-        <div class="shadow-2xl bg-white rounded-lg h-18 hover:bg-red-700 clickable" onclick="buttonClicked()">button</div>
-        <div id="scrollboxEl" class="scrollable">
-            <div id="stretchEl"></div>
+<body class="bg-black">
+    <div id="cursorEl" class="bg-red-500 absolute w-6 h-6 z-50 rounded-full">
+        <svg transform="rotate(-45)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+        </svg>
+    </div>
+    <div class="h-screen flex flex-col justify-center items-center">
+        <!-- <div class="shadow-2xl bg-white rounded-lg h-18 hover:bg-red-700 clickable" onclick="buttonClicked()">button</div>
+        <div class="bg-gray-600 absolute w-4/5 overscroll-x-auto scrollable">
+            <div id="stretchEl" class="w-20 h-10 bg-blue-400"></div>
+        </div> -->
+        <div class="w-4/5 flex justify-center items-center">
+            <div data-hover="bg-blue-700" class="bg-blue-400 hover:bg-blue-700 text-white text-6xl font-bold py-10 px-10 rounded hoverable clickable" onclick="buttonClicked()">Button</div>
         </div>
-        <canvas id="canvasEl" class="drawable" width="1300" height="600"></canvas>
-        
-        <div id="cursorEl">
-            <div id="cursorLoader"></div>
-        </div>
+
+        <canvas id="canvasEl" class="bg-black drawable"></canvas>
     </div>
 </body>
 </html>

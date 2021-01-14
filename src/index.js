@@ -78,10 +78,10 @@ const checkIfHovered = () => {
     if (hoveredElem === undefined) {
         var allClickableElements = document.querySelectorAll('.hoverable')
         allClickableElements.forEach((elem) => {
-            elem.classList.remove("hovered")
+            elem.classList.remove(elem.dataset.hover)
         });
     } else {
-        hoveredElem.classList.add("hovered")
+        hoveredElem.classList.add(hoveredElem.dataset.hover)
     }
 }
 
