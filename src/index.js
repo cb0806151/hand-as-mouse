@@ -108,18 +108,20 @@ const checkIfDrawing = () => {
 const setCursorStyle = () => {
 
     if (status == "back") {
-        cursor.style.backgroundColor = "lime"
+        // cursor.style.backgroundColor = "lime"
+        document.getElementById("cursorDefault").classList.add("hidden")
+        document.getElementById("cursorSelect").classList.remove("hidden")
     } else {
-        cursor.style.backgroundColor = "red"
+        // cursor.style.backgroundColor = "red"
+        document.getElementById("cursorDefault").classList.remove("hidden")
+        document.getElementById("cursorSelect").classList.add("hidden")
     }
 
     if (hoveredElem === undefined) {
         clickGauge = 0
-        cursor.style.opacity = 0.5
     } else {
         if (status == "back") {
             clickGauge += 1
-            cursor.style.opacity = 0.5 + (clickGauge/40)
         }
     }
 }
