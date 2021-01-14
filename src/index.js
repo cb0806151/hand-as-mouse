@@ -2,6 +2,7 @@ import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
+import './style.css'
 
 var canvas = document.getElementById("canvasEl")
 var ctx = document.getElementById("canvasEl").getContext("2d")

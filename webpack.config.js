@@ -6,13 +6,24 @@ module.exports = {
         rules: [
             {
                 test: /\.html$/,
-                    use: [
-                        {
-                            loader: "html-loader",
-                            options: { minimize: true }
-                        }
-                    ]
-            }
+                use: [
+                    {
+                        loader: "html-loader",
+                        options: { minimize: true }
+                    }
+                ]
+            },
+            {
+                test: /\.css$/i,
+                exclude: /node_modules/,
+                use: [
+                    'style-loader', 
+                    {
+                        loader: 'css-loader', options: { importLoaders: 1 }
+                    },
+                    'postcss-loader',
+                ],
+            },
         ]
     },
     plugins: [

@@ -42,7 +42,7 @@
         }
         #stretchEl {
             width: 200%;
-            height: 205px;
+            height: 105px;
             background-color: darkcyan;
         }
         #scrollbarEl {
@@ -51,18 +51,17 @@
             background-color: lightgray;
         }
         #canvasEl {
-            position: absolute;
             left: 500px;
             background-color: black;
         }
     </style>
 </head>
 <body>
-    <div id="container">-->
-        <!-- <div id="scrollboxEl" class="scrollable">
+    <div id="container">
+        <div class="shadow-2xl bg-white rounded-lg h-18 hover:bg-red-700 clickable" onclick="buttonClicked()">button</div>
+        <div id="scrollboxEl" class="scrollable">
             <div id="stretchEl"></div>
-            <button class="buttonEl hoverable clickable" onclick="buttonClicked()">Button</button>
-        </div> -->
+        </div>
         <canvas id="canvasEl" class="drawable" width="1300" height="600"></canvas>
         
         <div id="cursorEl">
