@@ -79,28 +79,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 25)
 });
 
-const setPinchListener = () => {
-    handsfree.on(`finger-pinched-start-${rightHanded ? 1 : 0}-0`, () => {
-        if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
-        canDraw = true
-    })
-
-    handsfree.on(`finger-pinched-released-${rightHanded ? 1 : 0}-0`, () => {
-        canDraw = false
-    })
-}
-
-const setCanvasDimensions = () => {
-    canvas.width = getComputedStyle(canvas).width.slice(0, -2)
-    canvas.height = getComputedStyle(canvas).height.slice(0, -2)
-    ctx = canvas.getContext("2d")
-}
-
 window.eraseSignature = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 window.goToPage = (going, leaving) => {
+    if (going === 'verifyPage' && Object.keys(currentOrder).length === 0) return;
     document.getElementById(leaving).classList.add("hidden")
     document.getElementById(going).classList.remove("hidden")
     if (going === 'confirmPage') {
@@ -123,6 +107,23 @@ window.removeItem = (itemId) => {
     }
     createOrderTray();
     
+}
+
+const setPinchListener = () => {
+    handsfree.on(`finger-pinched-start-${rightHanded ? 1 : 0}-0`, () => {
+        if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
+        canDraw = true
+    })
+
+    handsfree.on(`finger-pinched-released-${rightHanded ? 1 : 0}-0`, () => {
+        canDraw = false
+    })
+}
+
+const setCanvasDimensions = () => {
+    canvas.width = getComputedStyle(canvas).width.slice(0, -2)
+    canvas.height = getComputedStyle(canvas).height.slice(0, -2)
+    ctx = canvas.getContext("2d")
 }
 
 const createOrderTray = () => {
