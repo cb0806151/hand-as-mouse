@@ -45,30 +45,20 @@ var items = {
     },
 }
 var currentOrder = {}
+const handsfree = new Handsfree({
+    hands: {
+      enabled: true,
+      maxNumHands: 1,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.5
+    }
+  })
 
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
     canvas = document.getElementById("canvasEl")
-
-    const handsfree = new Handsfree({
-        hands: {
-          enabled: true,
-          maxNumHands: 1,
-          minDetectionConfidence: 0.6,
-          minTrackingConfidence: 0.5
-        }
-      })
     handsfree.start();
 
-    handsfree.on('finger-pinched-start-1-0', () => {
-        if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
-        canDraw = true
-    })
-
-    handsfree.on('finger-pinched-released-1-0', () => {
-        canDraw = false
-    })
-    
     setInterval(() => {
         if (handsfree.data.hands !== undefined && 
             handsfree.data.hands.multiHandLandmarks !== undefined) {
@@ -88,6 +78,17 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }, 25)
 });
+
+const setPinchListener = () => {
+    handsfree.on(`finger-pinched-start-${rightHanded ? 1 : 0}-0`, () => {
+        if (drewElem !== undefined) lastLinePosition = [cursorX, cursorY]
+        canDraw = true
+    })
+
+    handsfree.on(`finger-pinched-released-${rightHanded ? 1 : 0}-0`, () => {
+        canDraw = false
+    })
+}
 
 const setCanvasDimensions = () => {
     canvas.width = getComputedStyle(canvas).width.slice(0, -2)
@@ -265,5 +266,6 @@ const checkDominantHand = (handData) => {
         }
         document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
         document.getElementById("handCheckContinueButton").classList.remove("hidden")
+        setPinchListener()
     }
 }

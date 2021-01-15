@@ -97,7 +97,13 @@
             </div>
             <canvas id="canvasEl" class="w-full h-96 bg-white rounded-lg block drawable"></canvas>
             <div data-hover="bg-red-700" class="bg-red-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="eraseSignature()">Erase Signature</div>
-            <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('cursorEl', 'confirmPage')">Place Order</div>
+            <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('orderNumberPage', 'confirmPage')">Place Order</div>
+        </div>
+
+        <div id="orderNumberPage" class="w-4/5 flex flex-auto flex-col mt-10 hidden">
+            <div class="bg-white w-full p-8 rounded-lg mb-3 mr-3 text-center">
+                <p id="handCheckMessage" class="font-bold text-3x1">Your order number is 8 and your food will be ready shortly<br/><br/>This is the end of the tech demo; many thanks for trying it out!</p>
+            </div>
         </div>
 
     </div>
