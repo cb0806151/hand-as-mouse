@@ -22,6 +22,7 @@ var cursorY = 0;
 var scrollStartPosition = 0;
 var lastLinePosition = [undefined, undefined]
 var canDraw = false;
+var maxClickGauge = 30;
 var items = {
     0: {
         "name": "Greek Salad",
@@ -141,6 +142,7 @@ const checkIfHovered = () => {
         var allClickableElements = document.querySelectorAll('.hoverable')
         allClickableElements.forEach((elem) => {
             elem.classList.remove(elem.dataset.hover)
+            elem.style.backgroundImage = "none"
         });
     } else {
         hoveredElem.classList.add(hoveredElem.dataset.hover)
@@ -176,6 +178,7 @@ const setCursorStyle = () => {
         // cursor.style.backgroundColor = "red"
         document.getElementById("cursorDefault").classList.remove("hidden")
         document.getElementById("cursorSelect").classList.add("hidden")
+        clickGauge = 0;
         if (hoveredElem !== undefined) clickedElem.style.backgroundImage = "none"
     }
 
@@ -191,10 +194,10 @@ const setCursorStyle = () => {
 const checkIfClicking = () => {
 
     if (clickedElem !== undefined && status == "back") {
-        let gradient = `linear-gradient(to left, rgba(255, 255, 255, 0.5) ${(clickGauge/20)*100}%, ${getComputedStyle(clickedElem).backgroundColor} ${(clickGauge/20)*100}%)`
+        let gradient = `linear-gradient(to left, rgba(255, 255, 255, 0.5) ${(clickGauge/maxClickGauge)*100}%, ${getComputedStyle(clickedElem).backgroundColor} ${(clickGauge/maxClickGauge)*100}%)`
         clickedElem.style.backgroundImage = gradient
         lastElemClicked = clickedElem
-        if (clickGauge === 30) {
+        if (clickGauge === maxClickGauge) {
             clickGauge = 0
             clickedElem.click();
         }
