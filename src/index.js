@@ -1,6 +1,4 @@
-import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
-import * as handpose from "@tensorflow-models/handpose";
 import Handsfree from "handsfree";
 import './style.css'
 import { get } from 'lodash'
@@ -265,7 +263,7 @@ const checkDominantHand = (handData) => {
         } else {
             rightHanded = true
         }
-        document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
+        document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To scroll, flip the back of your hand to face the camera on a surface with a scroll bar and drag it in the direction you want the scroll bar to move.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
         document.getElementById("handCheckContinueButton").classList.remove("hidden")
         setPinchListener()
     }
