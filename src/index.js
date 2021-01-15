@@ -8,6 +8,7 @@ import { get } from 'lodash'
 var canvas = document.getElementById("canvasEl")
 var ctx = document.getElementById("canvasEl").getContext("2d")
 var cursor = document.getElementById("cursorEl");
+var handCheckBar = document.getElementById("dominantHandLoadBar")
 var hoveredElem = undefined;
 var clickedElem = undefined;
 var scrolledElem = undefined;
@@ -23,6 +24,8 @@ var scrollStartPosition = 0;
 var lastLinePosition = [undefined, undefined]
 var canDraw = false;
 var maxClickGauge = 30;
+var rightHanded = undefined;
+var handCheckTimer = 0
 var items = {
     0: {
         "name": "Greek Salad",
@@ -76,14 +79,18 @@ window.addEventListener("DOMContentLoaded", () => {
         if (handsfree.data.hands !== undefined && 
             handsfree.data.hands.multiHandLandmarks !== undefined) {
                 let landmarks = handsfree.data.hands.multiHandLandmarks[0]
-                moveCursor(handsfree.data.hands.multiHandLandmarks[0])
-                checkSideOfHand(landmarks)
-                checkElementsNearCursor()
-                if (cursor != null) setCursorStyle()
-                checkIfClicking()
-                checkIfHovered()
-                checkIfScrolling()
-                checkIfDrawing()
+                moveCursor(landmarks)
+                if (rightHanded === undefined) {
+                    checkDominantHand(handsfree.data.hands.multiHandedness[0])
+                } else {
+                    checkSideOfHand(landmarks)
+                    checkElementsNearCursor()
+                    if (cursor != null) setCursorStyle()
+                    checkIfClicking()
+                    checkIfHovered()
+                    checkIfScrolling()
+                    checkIfDrawing()
+                }
         }
     }, 25)
 });
@@ -171,11 +178,9 @@ const checkIfDrawing = () => {
 const setCursorStyle = () => {
 
     if (status == "back") {
-        // cursor.style.backgroundColor = "lime"
         document.getElementById("cursorDefault").classList.add("hidden")
         document.getElementById("cursorSelect").classList.remove("hidden")
     } else {
-        // cursor.style.backgroundColor = "red"
         document.getElementById("cursorDefault").classList.remove("hidden")
         document.getElementById("cursorSelect").classList.add("hidden")
         clickGauge = 0;
@@ -209,7 +214,8 @@ const getSideOfHand = (landmarks, flipped) => {
     let options = ["palm", "back"];
     if (flipped) options.reverse();
 
-    if (landmarks[0].y - landmarks[12].y > 0) {
+    let handUpsideDown = (landmarks[0].y - landmarks[12].y) > 0
+    if (handUpsideDown) {
         status = options[0]
     } else {
         status = options[1]
@@ -222,19 +228,39 @@ const getSideOfHand = (landmarks, flipped) => {
 }
 
 const checkSideOfHand = (landmarks) => {
-    if (landmarks[20].x - landmarks[4].x > 0) {
+
+    let palmDeteced = (landmarks[20].x - landmarks[4].x) * (rightHanded ? -1 : 1) > 0
+    if (palmDeteced) {
         getSideOfHand(landmarks, false)
     } else {
         getSideOfHand(landmarks, true)
     }
 }
 
-const moveCursor = (landmarks) => {
+const moveCursor = (landmarks, handData) => {
     cursorX = (window.innerWidth - (landmarks[9].x * 1300))
     cursorY = (landmarks[9].y * 800)
 
     if (cursor != null) {
         cursor.style.left = cursorX + 'px'
         cursor.style.top = cursorY + 'px'
+    }
+}
+
+const checkDominantHand = (handData) => {
+    if (handCheckTimer < maxClickGauge) {
+        handCheckTimer += 1
+        let gradient = `linear-gradient(to left, rgba(52, 211, 153, 1) ${(handCheckTimer/maxClickGauge)*100}%, ${getComputedStyle(handCheckBar).backgroundColor} ${(handCheckTimer/maxClickGauge)*100}%)`
+        handCheckBar.style.backgroundImage = gradient
+    } else {
+        if (handData.label === "Right") {
+            rightHanded = false
+            document.getElementById("cursorDefault").setAttribute('transform', 'scale(-1, 1)') 
+            document.getElementById("cursorSelect").setAttribute('transform', 'scale(-1, 1)') 
+        } else {
+            rightHanded = true
+        }
+        document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
+        document.getElementById("handCheckContinueButton").classList.remove("hidden")
     }
 }

@@ -16,7 +16,21 @@
     </div>
     <div class="h-screen flex flex-col items-center">
 
-        <div id="orderPage" class="w-2/5 flex flex-auto flex-col mt-10">
+        <div id="handCheckPage" class="w-2/5 flex flex-auto flex-col mt-10">
+
+            <div class="bg-white w-full p-8 rounded-lg mb-3 mr-3">
+                <div id="dominantHandLoadBar" class="bg-gray-500 border-8 border-gray-500 w-full h-full p-8 rounded-lg"></div>
+            </div>
+
+            <div class="bg-white w-full p-8 rounded-lg mb-3 mr-3 text-center">
+                <p id="handCheckMessage" class="font-bold text-3x1">Please hold up your dominant hand with fingers pointed skyward, palm facing forward, and in front of your webcam until the bar above is filled.</p>
+            </div>
+
+            <div id="handCheckContinueButton" data-hover="bg-green-700" class="bg-green-500 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable hidden" onclick="goToPage('orderPage', 'handCheckPage')">Continue</div>
+        
+        </div>
+
+        <div id="orderPage" class="w-2/5 flex flex-auto flex-col mt-10 hidden">
 
             <div class="w-full flex flex-row flex-auto overflow-x-scroll scrollable" style="max-height: 370px;">
 
