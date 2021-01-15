@@ -50,12 +50,6 @@ window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
     canvas = document.getElementById("canvasEl")
 
-    canvas.width = getComputedStyle(canvas).width.slice(0, -2)
-    canvas.height = getComputedStyle(canvas).height.slice(0, -2)
-
-    ctx = canvas.getContext("2d")
-
-
     const handsfree = new Handsfree({
         hands: {
           enabled: true,
@@ -95,6 +89,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 25)
 });
 
+const setCanvasDimensions = () => {
+    canvas.width = getComputedStyle(canvas).width.slice(0, -2)
+    canvas.height = getComputedStyle(canvas).height.slice(0, -2)
+    ctx = canvas.getContext("2d")
+}
+
 window.eraseSignature = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -102,6 +102,9 @@ window.eraseSignature = () => {
 window.goToPage = (going, leaving) => {
     document.getElementById(leaving).classList.add("hidden")
     document.getElementById(going).classList.remove("hidden")
+    if (going === 'confirmPage') {
+        setCanvasDimensions();
+    }
 }
 
 window.orderItem = (itemId) => {
