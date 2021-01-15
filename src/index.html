@@ -64,11 +64,28 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div data-hover="bg-yellow-700" class="bg-yellow-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('orderPage', 'verifyPage')">Back</div>
-                <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('orderPage', 'verifyPage')">Confirm</div>
+                <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('confirmPage', 'verifyPage')">Confirm</div>
             </div>
         </div>
 
+        <div id="confirmPage" class="w-4/5 flex flex-auto flex-col mt-10 hidden">
+            <div class="absolute w-4/5 h-96">
+                <div class="h-full grid grid-cols-1 gap-4">
+                    <div class="h-full">
+                        <p class="w-full h-1 ml-10 mb-4 text-gray-300 font-bold relative top-32">x First Name</p>
+                        <hr class="w-11/12 h-1 m-auto bg-gray-300 relative top-36"/>
+                    </div>
+                    <div class="h-full">
+                        <p class="w-full h-1 ml-10 mb-4 text-gray-300 font-bold relative top-28">x Last Name</p>
+                        <hr class="w-11/12 h-1 m-auto bg-gray-300 relative top-32"/>
+                    </div>
+                </div>
+            </div>
+            <canvas id="canvasEl" class="w-full h-96 bg-white rounded-lg block drawable"></canvas>
+            <div data-hover="bg-red-700" class="bg-red-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="eraseSignature()">Erase Signature</div>
+            <div data-hover="bg-green-700" class="bg-green-500 mt-3 p-7 text-center text-white font-bold text-4xl rounded-lg hoverable clickable" onclick="goToPage('cursorEl', 'confirmPage')">Place Order</div>
+        </div>
+
     </div>
-    <canvas id="canvasEl" class="block drawable"></canvas>
 </body>
 </html>

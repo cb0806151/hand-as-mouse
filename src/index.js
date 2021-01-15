@@ -45,7 +45,12 @@ var currentOrder = {}
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
     canvas = document.getElementById("canvasEl")
+
+    canvas.width = getComputedStyle(canvas).width.slice(0, -2)
+    canvas.height = getComputedStyle(canvas).height.slice(0, -2)
+
     ctx = canvas.getContext("2d")
+
 
     const handsfree = new Handsfree({
         hands: {
@@ -81,6 +86,10 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }, 25)
 });
+
+window.eraseSignature = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
 window.goToPage = (going, leaving) => {
     document.getElementById(leaving).classList.add("hidden")
@@ -148,10 +157,9 @@ const checkIfDrawing = () => {
 
     if (canDraw === true && drewElem !== undefined && lastLinePosition[0] !== undefined) {
         ctx.beginPath()
-        ctx.strokeStyle = "white";
         ctx.lineWdith = 2;
-        ctx.moveTo(lastLinePosition[0] - 500, lastLinePosition[1])
-        ctx.lineTo(cursorX - 500, cursorY)
+        ctx.moveTo(lastLinePosition[0] - 100, lastLinePosition[1])
+        ctx.lineTo(cursorX - 100, cursorY)
         ctx.stroke()
         ctx.closePath()
         lastLinePosition = [cursorX, cursorY]
@@ -186,7 +194,7 @@ const checkIfClicking = () => {
         let gradient = `linear-gradient(to left, rgba(255, 255, 255, 0.5) ${(clickGauge/20)*100}%, ${getComputedStyle(clickedElem).backgroundColor} ${(clickGauge/20)*100}%)`
         clickedElem.style.backgroundImage = gradient
         lastElemClicked = clickedElem
-        if (clickGauge === 20) {
+        if (clickGauge === 30) {
             clickGauge = 0
             clickedElem.click();
         }
