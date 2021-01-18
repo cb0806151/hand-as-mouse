@@ -6,7 +6,13 @@
     <title>Document</title>
 </head>
 <body class="bg-gray-400">
-    <div id="cursorEl" class="absolute w-8 h-8 z-50 rounded-full">
+    <div id="loadingScreen" class="bg-gray-400 w-full h-screen absolute z-50 flex justify-center items-center">
+        <div class="bg-white w-60 h-10 rounded-lg flex justify-center items-center">
+            <div class="w-5 h-5 rounded-l-full border-l-4 border-black animate-spin mr-4"></div>
+            <p class="font-bold">Loading</p>
+        </div>
+    </div>
+    <div id="cursorEl" class="absolute w-8 h-8 z-40 rounded-full">
         <svg id="cursorDefault" class="text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="black">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
         </svg>

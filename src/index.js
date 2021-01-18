@@ -55,7 +55,9 @@ const handsfree = new Handsfree({
 window.addEventListener("DOMContentLoaded", () => {
     cursor = document.getElementById("cursorEl");
     canvas = document.getElementById("canvasEl")
-    handsfree.start();
+    handsfree.start(() => {
+        document.getElementById("loadingScreen").classList.add("hidden")
+    });
 
     setInterval(() => {
         if (handsfree.data.hands !== undefined && 
