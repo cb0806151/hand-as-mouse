@@ -162,8 +162,17 @@ const checkIfHovered = () => {
 }
 
 const checkIfScrolling = () => {
-    if (clickedElem === undefined && scrolledElem !== undefined && status == "back" && positionOnClick[0] !== undefined) {
-        scrolledElem.scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
+    if (clickedElem === undefined && 
+        scrolledElem !== undefined && 
+        status == "back" && 
+        positionOnClick[0] !== undefined) {
+
+        if (scrolledElem.dataset.scroll !== undefined) {
+            document.getElementById(scrolledElem.dataset.scroll).scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
+        } else {
+            scrolledElem.scrollLeft = scrollStartPosition + (cursorX - positionOnClick[0])
+        }
+        
     } 
 }
 
@@ -189,7 +198,7 @@ const setCursorStyle = () => {
         document.getElementById("cursorDefault").classList.remove("hidden")
         document.getElementById("cursorSelect").classList.add("hidden")
         clickGauge = 0;
-        if (hoveredElem !== undefined) clickedElem.style.backgroundImage = "none"
+        if (hoveredElem !== undefined && clickedElem !== undefined) clickedElem.style.backgroundImage = "none"
     }
 
     if (hoveredElem === undefined) {
@@ -227,7 +236,14 @@ const getSideOfHand = (landmarks, flipped) => {
     }
     if (status !== lastStatus) {
         positionOnClick = [cursorX, cursorY]
-        if (scrolledElem !== undefined) scrollStartPosition = scrolledElem.scrollLeft
+        if (scrolledElem !== undefined) {
+            if (scrolledElem.dataset.scroll !== undefined) {
+                scrollStartPosition = document.getElementById(scrolledElem.dataset.scroll).scrollLeft
+            } else {
+                scrollStartPosition = scrolledElem.scrollLeft
+            }
+        }
+        if (scrolledElem.dataset.scroll !== undefined) scrollStartPosition = document.getElementById(scrolledElem.dataset.scroll).scrollLeft
         if (lastElemClicked !== undefined) lastElemClicked.style.backgroundImage = "none"
     }
 }
@@ -265,7 +281,7 @@ const checkDominantHand = (handData) => {
         } else {
             rightHanded = true
         }
-        document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To scroll, flip the back of your hand to face the camera on a surface with a scroll bar and drag it in the direction you want the scroll bar to move.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
+        document.getElementById("handCheckMessage").innerHTML = `${rightHanded ? `Right hand` : `Left hand`} selected.<br/><br/>To click, flip the back of your hand to face the camera and hold until the timer on the button finishes.<br/><br/>To scroll, flip the back of your hand to face the camera on a button that says "scroll bar" and drag it in the direction you want the actual scroll bar (usually found above the button) to move.<br/><br/>To write, pinch your index finger and thumb together and trace letters.`
         document.getElementById("handCheckContinueButton").classList.remove("hidden")
         setPinchListener()
     }
