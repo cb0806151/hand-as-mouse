@@ -68,6 +68,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     checkDominantHand(handsfree.data.hands.multiHandedness[0])
                 } else {
                     checkSideOfHand(landmarks)
+                    checkIfHandFlipped()
                     checkElementsNearCursor()
                     if (cursor != null) setCursorStyle()
                     checkIfClicking()
@@ -234,6 +235,9 @@ const getSideOfHand = (landmarks, flipped) => {
     } else {
         status = options[1]
     }
+}
+
+const checkIfHandFlipped = () => {
     if (status !== lastStatus) {
         positionOnClick = [cursorX, cursorY]
         if (scrolledElem !== undefined) {
@@ -242,8 +246,9 @@ const getSideOfHand = (landmarks, flipped) => {
             } else {
                 scrollStartPosition = scrolledElem.scrollLeft
             }
+            if (scrolledElem.dataset.scroll !== undefined) scrollStartPosition = document.getElementById(scrolledElem.dataset.scroll).scrollLeft
         }
-        if (scrolledElem.dataset.scroll !== undefined) scrollStartPosition = document.getElementById(scrolledElem.dataset.scroll).scrollLeft
+        
         if (lastElemClicked !== undefined) lastElemClicked.style.backgroundImage = "none"
     }
 }
